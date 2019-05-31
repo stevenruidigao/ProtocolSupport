@@ -11,7 +11,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
+import protocolsupport.api.utils.Profile;
 import protocolsupport.api.utils.ProfileProperty;
 import protocolsupport.utils.JsonUtils;
 
@@ -35,7 +38,20 @@ public class MinecraftSessionService {
 				));
 			}
 		} catch (IOException | IllegalStateException | JsonParseException e) {
-			throw new AuthenticationUnavailableException();
+			//System.out.println("[DynamicSlots] " + e);
+			String query = "https://api.mojang.com/users/profiles/minecraft/";
+			try {
+				URL urlt = new URL(query + profile.getOriginalName());
+				JsonObject root = new JsonParser().parse(new InputStreamReader(urlt.openStream(), StandardCharsets.UTF_8)).getAsJsonObject();
+				//JsonArray properties = JsonUtils.getJsonArray(root, "properties");
+				//for (JsonElement property : properties) {
+				//	if (property == null) return;
+				//}
+				throw new AuthenticationUnavailableException();
+			} catch (JsonIOException | JsonSyntaxException | IOException | IllegalStateException e1) {
+				System.out.println("Allowed!");
+				profile.setOriginalUUID(Profile.generateOfflineModeUUID(profile.getName()));
+			}
 		}
 	}
 
@@ -44,3 +60,4 @@ public class MinecraftSessionService {
 	}
 
 }
+
