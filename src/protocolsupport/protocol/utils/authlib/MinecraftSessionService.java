@@ -49,7 +49,7 @@ public class MinecraftSessionService {
 				//}
 				throw new AuthenticationUnavailableException();
 			} catch (JsonIOException | JsonSyntaxException | IOException | IllegalStateException e1) {
-				System.out.println("Allowed!");
+				//System.out.println("Allowed!");
 				profile.setOriginalUUID(Profile.generateOfflineModeUUID(profile.getName()));
 			}
 		}
